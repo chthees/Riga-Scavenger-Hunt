@@ -1,7 +1,7 @@
 // Renders private/gamemaster.html – the game masters' guide: how each riddle is solved,
 // hints, solutions, routes and the letters for the meeting place.
 import { escapeHtml as e, mdToHtml, roman } from '../src/text.js';
-import { allDecoys, stationLetters } from './lib.js';
+import { stationLetters } from './lib.js';
 
 const list = (items, tag = 'ol') => (items?.length ? `<${tag}>${items.map((x) => `<li>${mdToHtml(x).replace(/^<p>|<\/p>$/g, '')}</li>`).join('')}</${tag}>` : '');
 
@@ -105,18 +105,6 @@ export function renderGamemaster(content, teams, images) {
   const order = [...new Set([...(teams[0]?.route || []), ...Object.keys(content.stations)])];
   const stations = order.map((id, i) => stationCard(id, content.stations[id], i + 1, images)).join('');
 
-  const questRows = (content.sidequests || [])
-    .map((q, i) => `<tr><td>${i + 1}. ${e(q)}</td>${teams.map(() => '<td class="box"></td>').join('')}</tr>`)
-    .join('');
-
-  const decoys = allDecoys(content);
-  const eggs = (content.eggs || [])
-    .map(
-      (egg) => `<p>${(egg.answers || []).map((a) => `<code>${e(a)}</code>`).join(' ')}</p>
-    <ul>${(egg.messages || []).map((m) => `<li>${e(m)}</li>`).join('')}</ul>`
-    )
-    .join('');
-
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -164,7 +152,13 @@ export function renderGamemaster(content, teams, images) {
   ul.howto { padding-left: 20px; }
   @media print {
     body { background: #fff; } main { padding: 0; } .warn { display: none; }
-    .station { break-inside: avoid-page; } h2 { break-before: page; } h2.first { break-before: auto; }
+    /* Cards may split across pages (a whole card can be taller than the space left under a heading,
+       which used to push it to the next page and leave the heading alone on an empty page).
+       Keep the small blocks whole and headings attached to what follows. */
+    h2 { break-before: page; } h2.first { break-before: auto; }
+    .station { break-before: page; } h2 + .station { break-before: auto; }
+    h2, h3, h4, .gives, details.seen summary { break-after: avoid-page; }
+    .how, .hints, .solution, .imgs, .notes, details.seen, .team { break-inside: avoid-page; }
   }
 </style>
 </head>
@@ -187,19 +181,6 @@ export function renderGamemaster(content, teams, images) {
   ${stations}
   ${meetingPlaceCard(content.meetingPlace)}
 
-  <h2>Side quests – scoring</h2>
-  <table>
-    <tr><th>Side quest</th>${teams.map((t) => `<th>${e(t.name)}</th>`).join('')}</tr>
-    ${questRows}
-  </table>
-
-  <h2>Decoys &amp; easter eggs</h2>
-  <p>Fake answers planted in the page source. Typing any of these shows a troll message – nothing else happens.</p>
-  <p>${decoys.map((d) => `<code>${e(d)}</code>`).join(' ')}</p>
-  <span class="lbl">Troll messages</span>
-  <ul>${(content.decoys?.trollMessages || []).map((m) => `<li>${e(m)}</li>`).join('')}</ul>
-  <p><b>Easter eggs</b> (not in the source) – typing these on any step shows a special message:</p>
-  ${eggs}
 </main>
 <script>
   window.addEventListener('beforeprint', () => document.querySelectorAll('details').forEach((d) => (d.open = true)));

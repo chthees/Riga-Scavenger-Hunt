@@ -24,19 +24,6 @@ npm test             # unit tests of the crypto module
 - **Changes during the game:** as long as `secret` in `hunt.yaml` stays the same, rebuild and redeploy at any time
   (e.g. to accept an extra answer variant). Players keep their progress. GitHub Pages caches for up to ~10 minutes.
 
-## Content rules (summary)
-
-- A maximum of 8 answer variants per question.
-- No answers that can be guessed by hand: no bare numbers, nothing shorter than 4 characters (the build warns).
-- Decoys must never equal a real answer (the build fails).
-- `locationCheck.about` (optional, Markdown-light) is shown after the correct place name: a short "about this place" card.
-- `eggs` are secret answers (not planted in the source) that show a special message on any step, e.g. the Mona jokes.
-- Map riddles: `node scripts/make-map.js <lat> <lon> content/images/<name>.png [--size 1000] [--dx m] [--dy m]`
-  draws an unlabelled map from OpenStreetMap data with an X on the target (rotate it via `transform.rotate`).
-- Answers ignore a leading "the", so "The Old Mill" = "Old Mill". Riddle text supports `` `code` `` for ciphers.
-- Images go in `content/images/` and are transformed at build time (`flip`, `crop`, `rotate`, `pixelate`, `grayscale`, `levels: [black, white]`, `negate`, `hue`),
-  so the original never ends up in the page.
-
 ## Deployment (GitHub Pages)
 
 1. Create a public repository and check with `git status` that `content/` and `private/` do **not** show up.
