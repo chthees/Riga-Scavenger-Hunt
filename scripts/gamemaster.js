@@ -23,16 +23,22 @@ function howBlock(steps) {
     : '<div class="how missing">No solution steps written yet (add <code>solution</code> in hunt.yaml).</div>';
 }
 
+function imagesBlock(images, file, transform, originalFile) {
+  const img = file ? images.get(file + JSON.stringify(transform || {})) : null;
+  if (!img) return '';
+  const real = originalFile ? images.get('original:' + originalFile) : null;
+  const original = real
+    ? `<figure><img src="${real.originalDataUrl}" alt=""><figcaption>Reality (unedited photo)</figcaption></figure>`
+    : `<figure><img src="${img.originalDataUrl}" alt=""><figcaption>Original</figcaption></figure>`;
+  return `<div class="imgs"><figure><img src="${img.dataUrl}" alt=""><figcaption>What players see</figcaption></figure>${original}</div>`;
+}
+
 function stationCard(id, st, no, images) {
   const r = st.riddle;
-  const img = r.image ? images.get(r.image + JSON.stringify(r.transform || {})) : null;
   const sol = st.solution || {};
   const hints = st.hints || {};
   const loc = st.locationCheck;
-
-  const imgs = img
-    ? `<div class="imgs"><figure><img src="${img.dataUrl}" alt=""><figcaption>What players see</figcaption></figure><figure><img src="${img.originalDataUrl}" alt=""><figcaption>Original</figcaption></figure></div>`
-    : '';
+  const imgs = imagesBlock(images, r.image, r.transform);
 
   const locationPart = `
     <div class="part">
@@ -48,6 +54,7 @@ function stationCard(id, st, no, images) {
   const onSitePart = `
     <div class="part">
       <h4>2 · On site <span class="title">“${e(st.onSite.title || 'On site')}”</span></h4>
+      ${imagesBlock(images, st.onSite.image, st.onSite.transform, st.onSite.original)}
       <details class="seen"><summary>Question as the players see it</summary>${mdToHtml(st.onSite.question)}</details>
       ${howBlock(sol.onSite)}
       ${hintsBlock(hints.onSite)}
@@ -60,7 +67,6 @@ function stationCard(id, st, no, images) {
     ${stationLetters(st).length ? `<div class="gives"><span class="lbl">Letters this station gives</span>${lettersHtml(st)}</div>` : ''}
     ${loc ? locationPart : ''}
     ${onSitePart}
-    ${st.notes ? `<div class="notes"><b>Notes:</b> ${e(st.notes)}</div>` : ''}
   </section>`;
 }
 
@@ -142,7 +148,6 @@ export function renderGamemaster(content, teams, images) {
   .imgs figure { margin: 0; flex: 1; }
   .imgs img { width: 100%; border-radius: 6px; border: 1px solid #d8cfb8; }
   figcaption { font-size: 12px; color: #777; }
-  .notes { margin-top: 12px; font-size: 13px; color: #8a5a00; }
   table { border-collapse: collapse; width: 100%; background: #fff; }
   td, th { border: 1px solid #d8cfb8; padding: 7px 8px; font-size: 14px; text-align: left; vertical-align: top; }
   td.n { width: 34px; font-weight: 700; color: #12302F; }
@@ -158,7 +163,7 @@ export function renderGamemaster(content, teams, images) {
     h2 { break-before: page; } h2.first { break-before: auto; }
     .station { break-before: page; } h2 + .station { break-before: auto; }
     h2, h3, h4, .gives, details.seen summary { break-after: avoid-page; }
-    .how, .hints, .solution, .imgs, .notes, details.seen, .team { break-inside: avoid-page; }
+    .how, .hints, .solution, .imgs, details.seen, .team { break-inside: avoid-page; }
   }
 </style>
 </head>

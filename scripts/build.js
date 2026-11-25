@@ -81,6 +81,11 @@ for (const team of teams) {
     step.payload.image = images.get(k).dataUrl;
   }
 }
+// onSite.original: the unedited photo behind an on-site picture (e.g. spot the fake) – game masters' guide only
+for (const st of Object.values(content.stations)) {
+  const p = st.onSite?.original;
+  if (p && !images.has('original:' + p)) images.set('original:' + p, await processImage(p));
+}
 
 // ---------- 3. encrypt ----------
 

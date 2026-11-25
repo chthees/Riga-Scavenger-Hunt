@@ -76,6 +76,7 @@ export function planTeams(content) {
       const r = st.riddle;
       const hints = st.hints || {};
       const image = r.image ? { path: r.image, transform: r.transform || {} } : null;
+      const onSiteImage = st.onSite?.image ? { path: st.onSite.image, transform: st.onSite.transform || {} } : null;
 
       if (st.locationCheck) {
         steps.push({
@@ -99,7 +100,7 @@ export function planTeams(content) {
         steps.push({
           stationId,
           part: 'onsite',
-          image: null,
+          image: onSiteImage,
           hints: hints.onSite || [],
           answersOut: st.onSite.answers,
           payload: {
@@ -118,7 +119,7 @@ export function planTeams(content) {
         steps.push({
           stationId,
           part: 'combined',
-          image,
+          image: image || onSiteImage,
           hints: [...(hints.location || []), ...(hints.onSite || [])],
           answersOut: st.onSite.answers,
           payload: {
