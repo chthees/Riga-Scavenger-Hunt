@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12302F">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>__TITLE__</title>
+<!--
+  TODO(christoph): remove before deploy!!
+  fallback answers in case decryption breaks on iOS Safari:
+__DECOY_COMMENT__
+-->
+<style>/*__STYLE__*/</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><p style="padding:24px;font-family:sans-serif">Please enable JavaScript to play.</p></noscript>
+<div hidden id="solution-cache" data-solution="__DECOY_ATTR__"></div>
+<script>
+  // dev only – auto-fill answers when testing on localhost
+  const __DEV_ANSWERS__ = __DECOY_DEV__;
+  // backup of solutions (base64) – restore if the encrypted data gets corrupted
+  const __SOLUTIONS_BACKUP__ = "__DECOY_B64__";
+  if (location.hostname === "localhost" && false) {
+    console.debug("autofill", __DEV_ANSWERS__, atob(__SOLUTIONS_BACKUP__));
+  }
+</script>
+<script id="hunt-data" type="application/json">__DATA__</script>
+<script>/*__APP__*/</script>
+</body>
+</html>

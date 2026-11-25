@@ -1,0 +1,16 @@
+node_modules/
+
+# SECRET – answers, hints, start codes. Never commit (the GitHub Pages repo is public).
+content/
+private/
+
+.DS_Store
+
+# Planning notes – contain answers
+PLAN.md
+PLACES.md
+PUZZLES.md
+
+# Local Claude Code settings
+.claude/settings.local.json
+.claude/settings.json
